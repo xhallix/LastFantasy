@@ -18,7 +18,6 @@ UCLASS()
 class LASTFANTASY_API ACombatMode : public AStaticMeshActor
 {
 	GENERATED_BODY()
-	
 
 private:
 	ABaseCharacter* MainPlayerCharacter;
@@ -29,7 +28,8 @@ public:
 	void BlurEnvironment();
 	void Disable();
 	void ClearBlurredEnvironment();
-
+	void PlayCombatSound();
+	void StopCombatSound();
 
 //UFUNCTION
 public:

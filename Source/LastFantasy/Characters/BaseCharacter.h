@@ -10,16 +10,33 @@ class LASTFANTASY_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+		class USpringArmComponent* CameraBoom;
 
-	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* CombatCameraTarget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* RegularCameraTarget;
+
+
+private:
+	bool isCombatMode = false;
+	bool cameraHasReachedLocation = false;
+
 public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
+
+	void EnableCombatMode();
+	void DisableCombatMode();
+	void EnableMovement();
+	void DisableMovement();
+	void Tick(float DeltaTime) override;
+
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -28,6 +45,15 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
+
+
+	// event to stop walk animation in BP
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "disableWalkAnimation"), Category = "Movement")
+		void DisableWalkAnimation();
+
+	// event to stop walk animation in BP
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "enableWalkAnimation"), Category = "Movement")
+		void EnableWalkAnimation();
 
 protected:
 
@@ -60,6 +86,6 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	
-	
+
+
 };

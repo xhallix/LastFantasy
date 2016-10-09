@@ -32,10 +32,66 @@ ABaseCharacter::ABaseCharacter()
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->bUsePawnControlRotation = false;
+
+	CombatCameraTarget = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CombatCameraTarget"));
+	CombatCameraTarget->SetupAttachment(RootComponent);
+	
+	RegularCameraTarget = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RegularCameraTarget"));
+	RegularCameraTarget->SetupAttachment(RootComponent);
+	FHitResult res;
+	RegularCameraTarget->K2_SetRelativeLocationAndRotation(CameraBoom->RelativeLocation, CameraBoom->RelativeRotation, false, res, false);
+
+	
 }
 
+
+
+
+void ABaseCharacter::EnableCombatMode()
+{
+	isCombatMode = true;
+	GetCharacterMovement()->Deactivate();
+	DisableMovement();
+}
+
+void ABaseCharacter::DisableCombatMode()
+{
+	isCombatMode = false;
+	EnableMovement();
+}
+
+void ABaseCharacter::EnableMovement()
+{
+	EnableWalkAnimation();
+	GetCharacterMovement()->Activate();
+}
+
+void ABaseCharacter::DisableMovement()
+{
+	DisableWalkAnimation();
+	GetCharacterMovement()->Deactivate();
+}
+
+void ABaseCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (isCombatMode && cameraHasReachedLocation != true) {
+	
+		float interpSpeed = 1.0;
+		FVector cameraVector = FMath::VInterpTo(FollowCamera->RelativeLocation, CombatCameraTarget->RelativeLocation, GetWorld()->GetDeltaSeconds(), interpSpeed);
+		FRotator cameraRotator = FMath::RInterpTo(FollowCamera->RelativeRotation, CombatCameraTarget->RelativeRotation, GetWorld()->GetDeltaSeconds(), interpSpeed);
+		FollowCamera->SetRelativeLocationAndRotation(cameraVector, cameraRotator);
+	
+		if (FollowCamera->RelativeLocation.Equals(CombatCameraTarget->RelativeLocation, 100))
+		{
+			cameraHasReachedLocation = true;
+		}
+	}
+
+
+}
 
 // Called to bind functionality to input
 void ABaseCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

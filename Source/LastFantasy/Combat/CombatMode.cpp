@@ -13,7 +13,7 @@ ACombatMode::ACombatMode()
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ACombatMode::OnOverlapBegin);	
 
 	// Testing only
-	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &ACombatMode::OnOverlapEnd);
+	//TriggerBox->OnComponentEndOverlap.AddDynamic(this, &ACombatMode::OnOverlapEnd);
 }
 
 
@@ -25,19 +25,19 @@ void ACombatMode::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 
 void ACombatMode::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	//Disable();
+	Disable();
 }
 
 void ACombatMode::Enable()
 {
 	debug(TEXT("EnableCombat Mode"));
+	PlayCombatSound();
+	MainPlayerCharacter->EnableCombatMode();
 	BlurEnvironment();
-
 }
 
 void ACombatMode::BlurEnvironment()
 {
-	
 	if (MainPlayerCharacter != nullptr)
 	{
 		UCameraComponent* followCamera = MainPlayerCharacter->GetFollowCamera();
@@ -45,7 +45,7 @@ void ACombatMode::BlurEnvironment()
 		postProcessSettings.AutoExposureBias = -0.3;
 		postProcessSettings.VignetteIntensity = 1;
 		postProcessSettings.DepthOfFieldFocalDistance = 0;
-		postProcessSettings.DepthOfFieldFocalRegion = 1000;
+		postProcessSettings.DepthOfFieldFocalRegion = 1200;
 		postProcessSettings.DepthOfFieldMethod = EDepthOfFieldMethod::DOFM_Gaussian;
 		postProcessSettings.bOverride_AutoExposureBias = true;
 		postProcessSettings.bOverride_VignetteIntensity = true;
@@ -54,12 +54,13 @@ void ACombatMode::BlurEnvironment()
 		postProcessSettings.bOverride_DepthOfFieldMethod = true;
 		followCamera->PostProcessSettings = postProcessSettings;
 	}
-	
 }
 
 void ACombatMode::Disable()
 {
 	debug(TEXT("Disable combat mode"));
+	StopCombatSound();
+	MainPlayerCharacter->DisableCombatMode();
 	ClearBlurredEnvironment();
 }
 
@@ -79,4 +80,12 @@ void ACombatMode::ClearBlurredEnvironment()
 		postProcessSettings.bOverride_DepthOfFieldFocalRegion = true;
 		followCamera->PostProcessSettings = postProcessSettings;
 	}
+}
+
+void ACombatMode::PlayCombatSound()
+{
+}
+
+void ACombatMode::StopCombatSound()
+{
 }
