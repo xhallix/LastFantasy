@@ -17,10 +17,10 @@ class LASTFANTASY_API ABaseCharacter : public ACharacter
 		class UCameraComponent* FollowCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UStaticMeshComponent* CombatCameraTarget;
+		class UCameraComponent* CombatCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UStaticMeshComponent* RegularCameraTarget;
+		class UStaticMeshComponent* CombatCameraTarget;
 
 
 private:
@@ -87,5 +87,5 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-
+	FORCEINLINE class UCameraComponent* GetCombatCamera() const { return CombatCamera; }
 };

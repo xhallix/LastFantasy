@@ -40,9 +40,9 @@ void ACombatMode::BlurEnvironment()
 {
 	if (MainPlayerCharacter != nullptr)
 	{
-		UCameraComponent* followCamera = MainPlayerCharacter->GetFollowCamera();
+		UCameraComponent* followCamera = MainPlayerCharacter->GetCombatCamera();
 		FPostProcessSettings postProcessSettings;
-		postProcessSettings.AutoExposureBias = -0.3;
+		postProcessSettings.AutoExposureBias = -0.2;
 		postProcessSettings.VignetteIntensity = 1;
 		postProcessSettings.DepthOfFieldFocalDistance = 0;
 		postProcessSettings.DepthOfFieldFocalRegion = 1200;
@@ -68,7 +68,7 @@ void ACombatMode::ClearBlurredEnvironment()
 {
 	if (MainPlayerCharacter != nullptr)
 	{
-		UCameraComponent* followCamera = MainPlayerCharacter->GetFollowCamera();
+		UCameraComponent* followCamera = MainPlayerCharacter->GetCombatCamera();
 		FPostProcessSettings postProcessSettings;
 		postProcessSettings.AutoExposureBias =  0.0 ;
 		postProcessSettings.VignetteIntensity = 0.4;

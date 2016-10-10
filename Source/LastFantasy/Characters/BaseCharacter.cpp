@@ -22,7 +22,6 @@ ABaseCharacter::ABaseCharacter()
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
-	
 	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
@@ -35,25 +34,25 @@ ABaseCharacter::ABaseCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	CombatCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CombatCamera"));
+	CombatCamera->SetupAttachment(RootComponent);
+	CombatCamera->bAutoActivate = false;
+	
 	CombatCameraTarget = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CombatCameraTarget"));
 	CombatCameraTarget->SetupAttachment(RootComponent);
-	
-	RegularCameraTarget = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RegularCameraTarget"));
-	RegularCameraTarget->SetupAttachment(RootComponent);
-	FHitResult res;
-	RegularCameraTarget->K2_SetRelativeLocationAndRotation(CameraBoom->RelativeLocation, CameraBoom->RelativeRotation, false, res, false);
 
-	
+	CombatCameraTarget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CombatCameraTarget->bHiddenInGame = true;
+
 }
-
-
 
 
 void ABaseCharacter::EnableCombatMode()
 {
-	isCombatMode = true;
-	GetCharacterMovement()->Deactivate();
+	CombatCamera->Activate();
+	FollowCamera->Deactivate();
 	DisableMovement();
+	isCombatMode = true;
 }
 
 void ABaseCharacter::DisableCombatMode()
@@ -80,17 +79,14 @@ void ABaseCharacter::Tick(float DeltaTime)
 	if (isCombatMode && cameraHasReachedLocation != true) {
 	
 		float interpSpeed = 1.0;
-		FVector cameraVector = FMath::VInterpTo(FollowCamera->RelativeLocation, CombatCameraTarget->RelativeLocation, GetWorld()->GetDeltaSeconds(), interpSpeed);
-		FRotator cameraRotator = FMath::RInterpTo(FollowCamera->RelativeRotation, CombatCameraTarget->RelativeRotation, GetWorld()->GetDeltaSeconds(), interpSpeed);
-		FollowCamera->SetRelativeLocationAndRotation(cameraVector, cameraRotator);
-	
-		if (FollowCamera->RelativeLocation.Equals(CombatCameraTarget->RelativeLocation, 100))
+		FVector cameraVector = FMath::VInterpTo(CombatCamera->RelativeLocation, CombatCameraTarget->RelativeLocation, GetWorld()->GetDeltaSeconds(), interpSpeed);
+		FRotator cameraRotator = FMath::RInterpTo(CombatCamera->RelativeRotation, CombatCameraTarget->RelativeRotation, GetWorld()->GetDeltaSeconds(), interpSpeed);
+		CombatCamera->SetRelativeLocationAndRotation(cameraVector, cameraRotator);
+		if (CombatCamera->RelativeLocation.Equals(CombatCameraTarget->RelativeLocation, 100))
 		{
 			cameraHasReachedLocation = true;
 		}
 	}
-
-
 }
 
 // Called to bind functionality to input
