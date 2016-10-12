@@ -19,7 +19,7 @@ ACombatMode::ACombatMode()
 
 void ACombatMode::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	MainPlayerCharacter = Cast<ABaseCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	MainPlayerCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	Enable();
 }
 
@@ -34,6 +34,16 @@ void ACombatMode::Enable()
 	PlayCombatSound();
 	MainPlayerCharacter->EnableCombatMode();
 	BlurEnvironment();
+//	SetEnemiesToCombatMode();
+}
+
+void ACombatMode::SetEnemiesToCombatMode()
+{
+	ABasicEnemy* Enemy;
+	for (int i = 0; i < Enemies.Num(); i++) {
+		Enemy = Enemies[i];
+		Enemy->EnableCombatMode();
+	}
 }
 
 void ACombatMode::BlurEnvironment()

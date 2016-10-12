@@ -6,7 +6,8 @@
 
 #pragma once
 
-#include "../Characters/BaseCharacter.h"
+#include "../Characters/MainCharacter.h"
+#include "../Enemy/BasicEnemy.h"
 #include "Engine/StaticMeshActor.h"
 #include "CombatMode.generated.h"
 
@@ -20,7 +21,7 @@ class LASTFANTASY_API ACombatMode : public AStaticMeshActor
 	GENERATED_BODY()
 
 private:
-	ABaseCharacter* MainPlayerCharacter;
+	AMainCharacter* MainPlayerCharacter;
 
 public:
 	ACombatMode();
@@ -31,6 +32,10 @@ public:
 	void PlayCombatSound();
 	void StopCombatSound();
 
+private:
+
+	void SetEnemiesToCombatMode();
+
 //UFUNCTION
 public:
 	UFUNCTION()
@@ -40,7 +45,10 @@ public:
 
 //UPROPERTY
 public:
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Trigger")
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Trigger")
 		UBoxComponent* TriggerBox;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Enemies")
+		TArray<ABasicEnemy*> Enemies;
 };
