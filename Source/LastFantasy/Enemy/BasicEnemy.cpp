@@ -34,22 +34,48 @@ void ABasicEnemy::EnableCombatMode()
 }
 
 
-void ABasicEnemy::SetActiveAggressors(ABaseCharacter* Aggressor)
+void ABasicEnemy::SetActiveAggressors(TArray<ABaseCharacter*> Aggressors)
 {
-	Aggressors.Add(Aggressor);
+	for (int i = 0; i < Aggressors.Num(); i++) {
+		AttackInformation Info;
+		Info.Aggressor = Aggressors[i];
+		Info.Rage = 1;
+		AggressorsInformation.Add(Info);
+	}
 }
 
 
 void ABasicEnemy::FocusAggressor()
 {
-	if (Aggressors.Num() == 0)
+	if (AggressorsInformation.Num() == 0)
 	{
-		debug(TEXT("[ERROR] Missing Aggressors"));
+		logError(TEXT("[ERROR] Missing Aggressors"));
+		return;
 	}
-	int RndNum = rand() % (Aggressors.Num() - 0 + 1) + 0;
+
+	SetAggressorByRage();
 	const FVector CurrentLocation = GetActorLocation();
-	ABaseCharacter* Aggressor = Aggressors[RndNum];
-	const FVector AggressorLocation = Aggressor->GetActorLocation();
+	const FVector AggressorLocation = MainAggressor->GetActorLocation();
 	FRotator LookRotation = UKismetMathLibrary::FindLookAtRotation(CurrentLocation, AggressorLocation);
 	SetActorRotation(FMath::Lerp(GetActorRotation(), LookRotation, 0.2f));
 }
+
+void ABasicEnemy::SetAggressorByRage()
+{
+	if (AggressorsInformation.Num() == 1) 
+	{
+		MainAggressor = AggressorsInformation[0].Aggressor;
+		return;
+	}
+	int HighestRage = 0;
+	for (int i = 0; AggressorsInformation.Num(); i++) {
+		if (AggressorsInformation[i].Rage > HighestRage)
+		{
+			HighestRage = AggressorsInformation[i].Rage;
+			MainAggressor = AggressorsInformation[i].Aggressor;
+		}
+	}
+
+}
+
+

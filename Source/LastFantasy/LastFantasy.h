@@ -5,5 +5,8 @@
 
 #include "Engine.h"
 
-#define debug(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Red,text)
+#define debug(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Blue,text)
+#define logError(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red,text)
+
+
 #endif

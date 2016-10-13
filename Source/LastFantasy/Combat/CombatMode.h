@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "../Characters/BaseCharacter.h"
 #include "../Characters/MainCharacter.h"
 #include "../Enemy/BasicEnemy.h"
 #include "Engine/StaticMeshActor.h"
@@ -49,6 +50,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Trigger")
 		UBoxComponent* TriggerBox;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Enemies")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Combat")
 		TArray<ABasicEnemy*> Enemies;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Combat")
+		TArray<ABaseCharacter*> Heroes;
+
 };

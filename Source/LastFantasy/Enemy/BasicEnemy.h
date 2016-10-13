@@ -6,6 +6,7 @@
 #include "../Characters/BaseCharacter.h"
 #include "BasicEnemy.generated.h"
 
+
 UCLASS()
 class LASTFANTASY_API ABasicEnemy : public ACharacter
 {
@@ -43,11 +44,22 @@ public:
 
 public:
 	
-	void EnableCombatMode();
-	void FocusAggressor();
-	void SetActiveAggressors(ABaseCharacter* Aggressor);
+	void EnableCombatMode();	
+	void SetActiveAggressors(TArray<ABaseCharacter*> Aggressor);
+
 
 private:
-	TArray<ABaseCharacter*> Aggressors;
+
+	struct AttackInformation {ABaseCharacter* Aggressor; int Rage;};
+	TArray<AttackInformation> AggressorsInformation;
+
+	// The aggressor which causes most rage
+	ABaseCharacter* MainAggressor;
+
+private:
+	void FocusAggressor();
+	void SetAggressorByRage();
+	void SetMainPlayerCharacterAsAggressor();
+
 
 };
