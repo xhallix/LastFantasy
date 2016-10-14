@@ -17,13 +17,15 @@ class LASTFANTASY_API ABaseCharacter : public ACharacter
 protected:
 	void Tick(float DeltaTime);
 
-
 public:
 	void EnableCombatMode() {};
 	void DisableCombatMode() {};
-	void FocusEnemy(TArray<ABasicEnemy*> Enemies);
-	bool isCombatMode = false;
+	void FocusEnemy();
+
+
+
 	class UCameraComponent* CombatCamera;
+
 	FORCEINLINE class UCameraComponent* GetCombatCamera() const { return CombatCamera; }
 	
 };

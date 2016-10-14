@@ -12,10 +12,6 @@ ACombatMode::ACombatMode()
 	SetActorEnableCollision(true);
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ACombatMode::OnOverlapBegin);	
 	
-	if (Heroes.Num() == 0) {
-		logError(TEXT("No hero has been set"));
-	}
-
 	// Testing only
 	//TriggerBox->OnComponentEndOverlap.AddDynamic(this, &ACombatMode::OnOverlapEnd);
 }
@@ -35,7 +31,7 @@ void ACombatMode::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Othe
 void ACombatMode::Enable()
 {
 	PlayCombatSound();
-	MainPlayerCharacter->EnableCombatMode();
+	MainPlayerCharacter->EnableCombatMode(Enemies);
 	BlurEnvironment();
 	SetEnemiesToCombatMode();
 }
@@ -43,12 +39,18 @@ void ACombatMode::Enable()
 void ACombatMode::SetEnemiesToCombatMode()
 {
 	ABasicEnemy* Enemy = nullptr;
+	ABaseCharacter* Hero = Cast<ABaseCharacter>(MainPlayerCharacter);
+	if (Hero == nullptr) {
+		logError(TEXT("[ERROR] Failed to Cast MainPlayerCharacter as a Hero"));
+		return;
+	}
+	Heroes.Add(Hero);
 	for (int i = 0; i < Enemies.Num(); i++) {
 		Enemy = Enemies[i];
 		Enemy->SetActiveAggressors(Heroes);
 		Enemy->EnableCombatMode();
 	}
-	delete Enemy;
+	Enemy = nullptr;
 }
 
 void ACombatMode::BlurEnvironment()

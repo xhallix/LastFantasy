@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Characters/BaseCharacter.h"
+#include "Enemy/BasicEnemy.h"
 #include "MainCharacter.generated.h"
 
 /**
@@ -29,14 +30,15 @@ class LASTFANTASY_API AMainCharacter : public ABaseCharacter
 
 
 private:
-	bool isCombatMode = false;
 	bool cameraHasReachedLocation = false;
+	TArray<ABasicEnemy*> Enemies;
+	void SetCombatCamera();
 
 public:
 	// Sets default values for this character's properties
 	AMainCharacter();
 
-	void EnableCombatMode();
+	void EnableCombatMode(TArray<ABasicEnemy*> Enemies);
 	void DisableCombatMode();
 	void EnableMovement();
 	void DisableMovement();
@@ -50,7 +52,6 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
-
 
 	// event to stop walk animation in BP
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "disableWalkAnimation"), Category = "Movement")

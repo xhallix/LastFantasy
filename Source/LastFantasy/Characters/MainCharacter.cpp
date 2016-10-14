@@ -40,18 +40,18 @@ AMainCharacter::AMainCharacter()
 
 	CombatCameraTarget = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CombatCameraTarget"));
 	CombatCameraTarget->SetupAttachment(RootComponent);
-
 	CombatCameraTarget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CombatCameraTarget->bHiddenInGame = true;
 }
 
 
-void AMainCharacter::EnableCombatMode()
+void AMainCharacter::EnableCombatMode(TArray<ABasicEnemy*> Enemies)
 {
+	isCombatMode = true;
+	Super::FocusEnemy(Enemies);
 	CombatCamera->Activate();
 	FollowCamera->Deactivate();
 	DisableMovement();
-	isCombatMode = true;
 }
 
 void AMainCharacter::DisableCombatMode()
@@ -75,8 +75,12 @@ void AMainCharacter::DisableMovement()
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (isCombatMode && cameraHasReachedLocation != true) {
+	SetCombatCamera();
+}
 
+void AMainCharacter::SetCombatCamera()
+{
+	if (isCombatMode && cameraHasReachedLocation != true) {
 		float interpSpeed = 1.0;
 		FVector cameraVector = FMath::VInterpTo(CombatCamera->RelativeLocation, CombatCameraTarget->RelativeLocation, GetWorld()->GetDeltaSeconds(), interpSpeed);
 		FRotator cameraRotator = FMath::RInterpTo(CombatCamera->RelativeRotation, CombatCameraTarget->RelativeRotation, GetWorld()->GetDeltaSeconds(), interpSpeed);

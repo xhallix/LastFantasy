@@ -59,7 +59,8 @@ private:
 private:
 	void FocusAggressor();
 	void SetAggressorByRage();
-	void SetMainPlayerCharacterAsAggressor();
+
+	bool IsInCombat = false;
 
 
 };

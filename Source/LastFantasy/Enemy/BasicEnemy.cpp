@@ -24,12 +24,17 @@ void ABasicEnemy::BeginPlay()
 void ABasicEnemy::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
+	
+	if (IsInCombat)
+	{
+		FocusAggressor();
+	}
 }
 
 
 void ABasicEnemy::EnableCombatMode()
 {
+	IsInCombat = true;
 	FocusAggressor();
 }
 
@@ -57,7 +62,8 @@ void ABasicEnemy::FocusAggressor()
 	const FVector CurrentLocation = GetActorLocation();
 	const FVector AggressorLocation = MainAggressor->GetActorLocation();
 	FRotator LookRotation = UKismetMathLibrary::FindLookAtRotation(CurrentLocation, AggressorLocation);
-	SetActorRotation(FMath::Lerp(GetActorRotation(), LookRotation, 0.2f));
+	FRotator AggressorRotation = FMath::Lerp(GetActorRotation(), LookRotation, 0.2f);
+	SetActorRotation(AggressorRotation);
 }
 
 void ABasicEnemy::SetAggressorByRage()
@@ -68,7 +74,8 @@ void ABasicEnemy::SetAggressorByRage()
 		return;
 	}
 	int HighestRage = 0;
-	for (int i = 0; AggressorsInformation.Num(); i++) {
+	for (int i = 0; i < AggressorsInformation.Num(); i++) {
+	
 		if (AggressorsInformation[i].Rage > HighestRage)
 		{
 			HighestRage = AggressorsInformation[i].Rage;
